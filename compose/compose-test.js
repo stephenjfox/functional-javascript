@@ -54,15 +54,70 @@ test('Compose against 3 functions', (assert) => {
   assert.end();
 });
 
+
 test('Compose against a variable number of arguments', (assert) => {
 
-  const length = (strOrArray) => strOrArray.length;
+  const length = str => str.length;
   const sqr = num => num ** 2;
   const add1 = num => num + 1;
-  const box = any => [any];
+  const box = obj => ([obj]);
 
-  // TODO
+  const testInput = "squirrel";
+  const testFunc = compose(box, add1, sqr, length);
 
+  const expected = box(add1(sqr(length(testInput))));
+  const actual = testFunc(testInput);
+
+  assert.deepEqual(actual, expected,
+    `The content of ${expected} and ${actual} should be equivalent`);
+
+  assert.end();
+});
+
+test('Compose(...) should === compose2(...)', (assert) => {
+  
+  const isLessThanTwo = num => num < 2;
+  const trace = (...args) => {
+    console.log(args);
+    return args;
+  }
+
+  const expectedFunc = compose2(isLessThanTwo, trace);
+  const testFunc = compose(isLessThanTwo, trace);
+
+  const input = 0;
+  const expected = expectedFunc(input);
+  const actual = testFunc(input);
+
+  assert.equal(actual, expected, "Should both be 'true'");
+
+  assert.end();
+});
+
+test('Compose(...) correctness in arity-2', (assert) => {
+  const id = o => o;
+  const sqr = num => num ** 2;
+
+  const testFunc = compose(id, sqr);
+
+  assert.equal(testFunc(2), 4, "Should present '4'");
+
+  assert.end();
+});
+
+test('Compose(...) consistency in correctness', (assert) => {
+  const id = o => o;
+  const sqr = num => num ** 2;
+
+  const leftFunc = compose(id, sqr);
+  const rightFunc = compose(sqr, id);
+
+  const input = 4;
+
+  const left = leftFunc(input);
+  const right = rightFunc(input);
+  assert.equal(left, right,
+    'Expected ${left} === ${right}');
 
   assert.end();
 });

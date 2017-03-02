@@ -27,20 +27,21 @@ module.exports.compose = function() {
   if (arguments.length === 0) {
     throw Error("Cannot compose without function arguments");
   }
-  else if (arguments.length === 1) {
+  else if (arguments.length === 1 && typeof(arguments[0]) === "function") {
     // idealy, we would curry for at least another function
     // but here, we'll just return what we got.
     return arguments[0];
   } else {
 
-    const argsArr = Array.from(arguments);
+    const functions = Array.from(arguments);
+    const firstToApply = functions[functions.length - 1];
+    const functionsToApply = functions.slice(0, functions.length - 1);
 
-    return function (...args) {
+    return function (...firstParameters) {
 
-      return args.reduceRight((prevResult, func) => {
-        if (prevResult) return func(prevResult);
-        return func.apply(null, argsArr);
-      });
+      return functionsToApply.reduceRight((prevResult, func) => {
+        return func(prevResult);
+      }, firstToApply.apply(null, firstParameters));
     }
   }
 }
