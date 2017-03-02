@@ -54,15 +54,22 @@ test('Compose against 3 functions', (assert) => {
   assert.end();
 });
 
+
 test('Compose against a variable number of arguments', (assert) => {
 
-  const length = (strOrArray) => strOrArray.length;
+  const length = str => str.length;
   const sqr = num => num ** 2;
   const add1 = num => num + 1;
-  const box = any => [any];
+  const box = obj => ([obj]);
 
-  // TODO
+  const testInput = "squirrel";
+  const testFunc = compose(box, add1, sqr, length);
 
+  const expected = box(add1(sqr(length(testInput))));
+  const actual = testFunc(testInput);
+
+  assert.deepEqual(actual, expected,
+    `The content of ${expected} and ${actual} should be equivalent`);
 
   assert.end();
 });
