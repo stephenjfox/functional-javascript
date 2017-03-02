@@ -40,7 +40,6 @@ module.exports.compose = function() {
     return function (...firstParameters) {
 
       return functionsToApply.reduceRight((prevResult, func) => {
-        console.error(`prev: ${prevResult}, func: ${func}`);
         return func(prevResult);
       }, firstToApply.apply(null, firstParameters));
     }
